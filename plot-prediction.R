@@ -25,10 +25,10 @@ plot_prediction <- function(data = preds, lwd = 0.2,
     ggplot2::geom_sf(data = hg, fill = "black", color = "black", lwd = 0.01) +
     ggplot2::geom_sf(data = data, aes(color = ProbOccur), lwd = lwd) +
     ggplot2::coord_sf(xlim = xlim, ylim = ylim) +
-    scale_color_gradientn(colours = palette, 
-                          name = "Probability of\nOccurence", guide = "colourbar") + 
+    # scale_color_gradientn(colours = palette, 
+    #                       name = "Probability of\nOccurence", guide = "colourbar") + 
     labs(x = "Longitude", y = "Latitude") +
-    guides(colour = guide_legend(override.aes = list(size = 1))) +
+    # guides(colour = guide_legend(override.aes = list(size = 1))) +
     ggsn::scalebar(data = NULL, location = "bottomleft", dist = 10, 
                    height = 0.007, st.size = 2.3, st.dist = 0.015,
                    x.min = x.min, x.max = x.max, y.min = y.min, y.max = y.max) +

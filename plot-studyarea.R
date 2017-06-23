@@ -4,7 +4,7 @@ library(grid)
 
 set_sub("tidy")
 
-segs <- load_data("dat")
+segs <- load_data("segs")
 
 segs %<>% mutate(SurveyYear = ifelse(is.na(SurveyYear), "Predicted", 
                                      ifelse(SurveyYear == 2005, "Surveyed in 2005", "Surveyed in 2010")))
