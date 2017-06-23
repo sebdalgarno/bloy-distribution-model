@@ -6,21 +6,21 @@ load_datas()
 
 set_sub("models")
 
-datamod <- filter(dat, !is.na(SurveyYear))
-datamod %<>% select(-ITArea200, -ITArea500)
+datamod <- filter(segs, !is.na(SurveyYear))
+datamod %<>% select(-IT200, -IT500)
 
 # downweight absence points (npresent/nabsent)
 weight <- sum(datamod$Occur)/(nrow(datamod) - sum(datamod$Occur))
 datamod %<>% mutate(Weight = ifelse(Occur == 0, weight, 1))
 
 datatemp <- filter(datamod, SurveyYear == 2005)
-dataspat <- filter(datamod, Zone == "North")
+dataspat <- filter(datamod, Zone %in% c(2, 3, 4))
 
-shznpreds <- c("IslandArea", "Mussel", "Fucus", "BioExp", "SegLength", "ShoreType")
-fullpreds <- names(datamod)[c(2:7, 9:14)]
+#shznpreds <- c("IslandArea", "Mussel", "Fucus", "BioExp", "SegLength", "ShoreType")
+fullpreds <- names(datamod)[c(3:14)]
 
 # fit models - 10 iterations
-fit_gbm <- function(data, iter = 10, gbm.x = fullpreds) {
+fit_gbm <- function(data, iter = 1, gbm.x = fullpreds) {
   
   data %<>% as("Spatial")
   mod <- vector("list", iter)
@@ -34,7 +34,6 @@ fit_gbm <- function(data, iter = 10, gbm.x = fullpreds) {
 }
 
 modfull <- fit_gbm(data = datamod)
-modshzn <- fit_gbm(data = datamod, gbm.x = shznpreds)
 
 # variable selection
 simplify_gbm <- function(data, iter = 1, n.drops) {
@@ -46,37 +45,27 @@ simplify_gbm <- function(data, iter = 1, n.drops) {
 }
 
 fullsimp <- simplify_gbm(modfull)
-shznsimp <- simplify_gbm(modshzn)
 
 # build final models, including independent evaluation training sets
 namesimp.full <- fullsimp[[1]]$pred.list$preds.3
-namesimp.shzn <- shznsimp[[1]]$pred.list$preds.1
 
 modsimp.full <- fit_gbm(data = datamod, gbm.x = namesimp.full)
-modsimp.shzn <- fit_gbm(data = datamod, gbm.x = namesimp.shzn)
 modtemp.full <- fit_gbm(data = datatemp, gbm.x = namesimp.full)
-modspat.full <- fit_gbm(data = dataspat, gbm.x =namesimp.full)
-modtemp.shzn <- fit_gbm(data = datatemp, gbm.x = namesimp.shzn)
-modspat.shzn <- fit_gbm(data = dataspat, gbm.x =namesimp.shzn)
+modspat.full <- fit_gbm(data = dataspat, gbm.x = namesimp.full)
 
 save_object(modfull)
-save_object(modshzn)
 save_object(modsimp.full)
-save_object(modsimp.shzn)
 save_object(modtemp.full)
 save_object(modspat.full)
-save_object(modtemp.shzn)
-save_object(modspat.shzn)
 
 save_object(fullsimp)
-save_object(shznsimp)
 
 save_data(datamod)
 
 # generate predictions
 set_sub("prediction")
 
-predict_gbm <- function(model, data, iter = 10) {
+predict_gbm <- function(model, data, iter = 1) {
   pred <- data.frame(matrix(nrow = nrow(data), ncol = iter))
   
   for (i in 1:iter) {
@@ -86,7 +75,7 @@ predict_gbm <- function(model, data, iter = 10) {
   mean <- rowMeans(pred) %>% as.vector()
 }
 
-datpred <- mutate(dat, ProbOccur =  predict_gbm(modsimp.full, dat, iter = 10))
+datpred <- mutate(segs, ProbOccur =  predict_gbm(modsimp.full, segs, iter = 1))
 
 save_data(datpred)
 
