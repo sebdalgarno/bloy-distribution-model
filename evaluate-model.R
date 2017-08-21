@@ -8,7 +8,7 @@ load_objects()
 set_sub("evaluation")
 
 testtemp <- filter(datamod, SurveyYear == 2010)
-testspat <- filter(datamod, Zone == "South")
+testspat <- filter(datamod, Zone == 1)
 
 ### mean RI
 get_ri <- function(data, model) {
@@ -36,27 +36,20 @@ get_ri <- function(data, model) {
 }
 
 # tmp <- get_ri(data = modfull, model = "modfull")
-fulldrop <- fullsimp[[1]]$final.drops %>% filter(!is.na(order)) 
+fulldrop <- fullsimp[[2]]$final.drops %>% 
+  filter(!is.na(order)) 
 fulldrop <- as.character(fulldrop[1:nrow(fulldrop),1])
 
-shzndrop <- shznsimp[[1]]$final.drops %>% filter(!is.na(order)) 
-shzndrop <- as.character(shzndrop[1:nrow(shzndrop),1])
-
-allri <- data.frame(rbind(get_ri(modsimp.full, model = "modsimp.full"),
-                          get_ri(modsimp.shzn, model = "modsimp.shzn"),
-                          get_ri(modfull, model = "modfull"))) %>%
+allri <- data.frame(get_ri(modsimp.full, model = "modsimp.full")) %>%
   spread(key = Model, value = RI) %>%
   arrange(-modsimp.full) %>%
-  select(Predictor, modsimp.full, modsimp.shzn)
+  select(Predictor, modsimp.full)
 
 level = arrange(allri, -modsimp.full)[1:nrow(allri), 1]
 allri %<>% mutate(Predictor = ordered(Predictor, levels = level))
 
-allri %<>% mutate(`All (RI)` = ifelse(Predictor %in% fulldrop, "*", 
-                                        ifelse(is.na(modsimp.full), "-", modsimp.full)),
-                  `ShoreZone (RI)` = ifelse(Predictor %in% shzndrop, "*", 
-                                        ifelse(is.na(modsimp.shzn), "-", modsimp.shzn))) %>%
-  select(-modsimp.full, -modsimp.shzn) %>%
+allri %<>% mutate(`RI (%)` = modsimp.full) %>%
+  select(-modsimp.full) %>%
   arrange(Predictor)
 
 save_table(allri)
@@ -92,15 +85,12 @@ auc_cv <- function(model, test = datamod, iter = 10) {
   fin <- round(mean(auc[,1]), 3)
 }
 
-aucsumm <- data.frame(`Evaluation Method` = c("Training", "10-fold Cross-Validation", 
+aucsumm <- data.frame("Evaluation Method" = c("Training", "10-fold Cross-Validation", 
                                               "North/South Partition", "2005/2010 Partition"),
-                      `Full Model (AUC)` = c(auc_train(modsimp.full), 
+                      `AUC` = c(auc_train(modsimp.full), 
                                              auc_cv(modsimp.full), 
                                              auc_ind(model = modspat.full, test = testspat), 
-                                             auc_ind(model = modtemp.full, test = testtemp)),
-                      `ShoreZone Model (AUC)` =  c(auc_train(modsimp.shzn), 
-                                                   auc_cv(modsimp.shzn), 
-                                                   auc_ind(model = modspat.shzn, test = testspat), 
-                                                   auc_ind(model = modtemp.shzn, test = testtemp)))
+                                             auc_ind(model = modtemp.full, test = testtemp))
+                     )
 
 save_table(aucsumm)

@@ -1,4 +1,5 @@
 source('header.R')
+library(cowplot)
 
 set_sub("models")
 
@@ -7,7 +8,8 @@ predictors <- mod[[1]]$gbm.call$predictor.names
 
 set_sub("models")
 
-datamod <- load_data("datamod")
+datamod <- load_data("datamod") %>%
+  mutate(SegLength = as.numeric(SegLength))
 
 set_sub("partdep")
 
@@ -43,7 +45,8 @@ plot_cont <- function(data = partdep, pred = "SegLength", log = F) {
           axis.title.x = element_text(margin = margin(7, 0, 0, 0))) 
   
   if (log == T) {
-    gp + annotation_logticks(sides="b", short = unit(.5, "mm"), mid = unit(1, "mm"), long = unit(2, "mm")) + 
+    gp + annotation_logticks(sides="b", short = unit(.5, "mm"), mid = unit(1, "mm"), 
+                             long = unit(2, "mm")) +
       scale_x_continuous(labels = scales::math_format(10^.x))
   }
   
@@ -51,10 +54,6 @@ plot_cont <- function(data = partdep, pred = "SegLength", log = F) {
     gp
   }
 }
-
-part <- partdep[["ShoreType"]] %>% select_("ShoreType", "y")
-level = arrange(part, -y)[1:nrow(part), 1]
-part[,1] <- ordered(part[,1], levels = level)
 
 plot_fact <- function(data = partdep, pred = "ShoreType") {
   part <- data[[pred]] %>% select_(pred, "y")
@@ -67,8 +66,7 @@ plot_fact <- function(data = partdep, pred = "ShoreType") {
     theme_classic()  + coord_flip() +
     # scale_fill_manual(values = c("light grey","white")) +
     labs(x = "", y = "") + 
-    theme(axis.text.y = element_text(hjust = 1, vjust = 0.5),
-          axis.text.x = element_blank(), legend.position = "none", 
+    theme(axis.text.y = element_text(hjust = 1, vjust = 0.5), legend.position = "none", 
           axis.text = element_text(size = 11, margin = margin(20, 0, 0, 0)),
           axis.title = element_text(size = 14, face = 'bold'),
           axis.title.x = element_text(margin = margin(10, 0, 0, 0))) +
@@ -79,22 +77,22 @@ plot_fact <- function(data = partdep, pred = "ShoreType") {
 
 seglength <- plot_cont(pred = "SegLength", log = F)
 fetch <- plot_cont(pred = "Fetch",  log = T)
-it50 <- plot_cont(pred = "ITArea50",  log = F)
-it1000 <- plot_cont(pred = "ITArea1000", log = F)
+it50 <- plot_cont(pred = "IT50",  log = F)
+it1000 <- plot_cont(pred = "IT1000", log = F)
 treedist <- plot_cont(pred = "TreeDist", log = T)
 islandarea <- plot_cont(pred = "IslandArea", log = T)
-humandist <- plot_cont(pred = "HumanDist", log = F)
 
-cont <- grid.arrange(treedist, islandarea, fetch, humandist, seglength, it50, it1000, ncol = 2)
-print(cont)
+cont <- plot_grid(treedist, islandarea, fetch, seglength, it50, it1000, 
+          ncol = 2, align = "v", labels = "AUTO")
 
-save_plot(cont)
+save_plot("cont")
 
 shoretype <- plot_fact(pred = "ShoreType")
 ratstatus <- plot_fact(pred = "RatStatus")
 
-fact <- grid.arrange(shoretype, ratstatus, ncol = 1)
-fact
+plot_grid(shoretype, ratstatus, align = "v", 
+          nrow = 2, rel_heights = c(3/4, 1/4), labels = "AUTO")
+
 save_plot(fact)
 
 

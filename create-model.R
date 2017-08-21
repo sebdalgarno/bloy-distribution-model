@@ -20,7 +20,7 @@ dataspat <- filter(datamod, Zone %in% c(2, 3, 4))
 fullpreds <- names(datamod)[c(3:14)]
 
 # fit models - 10 iterations
-fit_gbm <- function(data, iter = 1, gbm.x = fullpreds) {
+fit_gbm <- function(data, iter = 10, gbm.x = fullpreds) {
   
   data %<>% as("Spatial")
   mod <- vector("list", iter)
@@ -33,10 +33,10 @@ fit_gbm <- function(data, iter = 1, gbm.x = fullpreds) {
   mod
 }
 
-modfull <- fit_gbm(data = datamod)
+modfull <- fit_gbm(data = datamod, iter = 10)
 
 # variable selection
-simplify_gbm <- function(data, iter = 1, n.drops) {
+simplify_gbm <- function(data, iter = 10, n.drops) {
   simp <- vector("list", iter)
   for (i in 1:iter) {
     simp[[i]] <- gbm.simplify(data[[i]])
@@ -44,10 +44,14 @@ simplify_gbm <- function(data, iter = 1, n.drops) {
   simp
 }
 
-fullsimp <- simplify_gbm(modfull)
+fullsimp <- simplify_gbm(modfull, iter = 10)
 
 # build final models, including independent evaluation training sets
-namesimp.full <- fullsimp[[1]]$pred.list$preds.3
+for(i in 1:10) {
+  print(fullsimp[[i]]$final.drops)
+}
+
+namesimp.full <- fullsimp[[1]]$pred.list$preds.4
 
 modsimp.full <- fit_gbm(data = datamod, gbm.x = namesimp.full)
 modtemp.full <- fit_gbm(data = datatemp, gbm.x = namesimp.full)
@@ -65,7 +69,7 @@ save_data(datamod)
 # generate predictions
 set_sub("prediction")
 
-predict_gbm <- function(model, data, iter = 1) {
+predict_gbm <- function(model, data, iter = 10) {
   pred <- data.frame(matrix(nrow = nrow(data), ncol = iter))
   
   for (i in 1:iter) {

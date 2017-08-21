@@ -11,6 +11,9 @@ segs %<>% mutate(SegLength = st_length(.))
 
 segs %<>% mutate(BioExp = ordered(BioExp, levels = c("VP", "P", "SP", "SE", "E")))
 
+# get log10 of area
+segs %<>% mutate(IslandArea = log10(IslandArea))
+
 # create shoretype predictor
 segs %<>% mutate(ShoreType = ifelse(Class < 3, "Wide rock", 
                                     ifelse(Class == 0, NA,

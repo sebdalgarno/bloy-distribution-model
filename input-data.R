@@ -1,7 +1,7 @@
 source('header.R')
 
 # predictors by point
-segs <- st_read('inputs/varsall_0909_2.shp')
+segs <- st_read('inputs/varsall_0909_2.shp', stringsAsFactors = F)
 
 # occurence
 occ <- read_csv('inputs/occurence.csv')
