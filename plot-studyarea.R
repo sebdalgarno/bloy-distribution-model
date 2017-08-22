@@ -1,6 +1,4 @@
 source('header.R')
-library(ggsn)
-library(grid)
 
 set_sub("tidy")
 
