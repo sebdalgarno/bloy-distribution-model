@@ -8,6 +8,8 @@ library(gridExtra)
 library(ggsn)
 library(mapview)
 library(mapedit)
+library(grid)
+library(rgeos)
 
 rm(list = ls())
 graphics.off()
