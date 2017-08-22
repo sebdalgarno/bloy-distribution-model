@@ -5,6 +5,8 @@ library(RColorBrewer)
 library(haidawave)
 library(gbm)
 library(gridExtra)
+library(ggsn)
+library(mapview)
 
 rm(list = ls())
 graphics.off()
