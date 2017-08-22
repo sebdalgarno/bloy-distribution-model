@@ -7,6 +7,7 @@ library(gbm)
 library(gridExtra)
 library(ggsn)
 library(mapview)
+library(mapedit)
 
 rm(list = ls())
 graphics.off()
