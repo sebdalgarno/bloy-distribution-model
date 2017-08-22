@@ -35,21 +35,20 @@ get_ri <- function(data, model) {
   
 }
 
-# tmp <- get_ri(data = modfull, model = "modfull")
 fulldrop <- fullsimp[[2]]$final.drops %>% 
   filter(!is.na(order)) 
 fulldrop <- as.character(fulldrop[1:nrow(fulldrop),1])
 
-allri <- data.frame(get_ri(modsimp.full, model = "modsimp.full")) %>%
+allri <- data.frame(get_ri(modsimp, model = "modsimp")) %>%
   spread(key = Model, value = RI) %>%
-  arrange(-modsimp.full) %>%
-  select(Predictor, modsimp.full)
+  arrange(-modsimp) %>%
+  select(Predictor, modsimp)
 
-level = arrange(allri, -modsimp.full)[1:nrow(allri), 1]
+level = arrange(allri, -modsimp)[1:nrow(allri), 1]
 allri %<>% mutate(Predictor = ordered(Predictor, levels = level))
 
-allri %<>% mutate(`RI (%)` = modsimp.full) %>%
-  select(-modsimp.full) %>%
+allri %<>% mutate(`RI (%)` = modsimp) %>%
+  select(-modsimp) %>%
   arrange(Predictor)
 
 save_table(allri)
@@ -87,10 +86,10 @@ auc_cv <- function(model, test = datamod, iter = 10) {
 
 aucsumm <- data.frame("Evaluation Method" = c("Training", "10-fold Cross-Validation", 
                                               "North/South Partition", "2005/2010 Partition"),
-                      `AUC` = c(auc_train(modsimp.full), 
-                                             auc_cv(modsimp.full), 
-                                             auc_ind(model = modspat.full, test = testspat), 
-                                             auc_ind(model = modtemp.full, test = testtemp))
+                      `AUC` = c(auc_train(modsimp), 
+                                             auc_cv(modsimp), 
+                                             auc_ind(model = modsimp.spat, test = testspat), 
+                                             auc_ind(model = modsimp.temp, test = testtemp))
                      )
 
 save_table(aucsumm)
