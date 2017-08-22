@@ -10,6 +10,7 @@ library(mapview)
 library(mapedit)
 library(grid)
 library(rgeos)
+library(cowplot)
 
 rm(list = ls())
 graphics.off()
