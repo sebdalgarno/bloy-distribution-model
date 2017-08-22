@@ -19,12 +19,13 @@ dataspat <- filter(datamod, Zone %in% c(2, 3, 4))
 #shznpreds <- c("IslandArea", "Mussel", "Fucus", "BioExp", "SegLength", "ShoreType")
 fullpreds <- names(datamod)[c(3:14)]
 
-# fit models - 10 iterations
+# fit full model - 10 iterations
 fit_gbm <- function(data, iter = 10, gbm.x = fullpreds) {
   
   data %<>% as("Spatial")
   mod <- vector("list", iter)
   
+  mod <- lapply()
   for (i in 1:iter) {
     mod[[i]] <- dismo::gbm.step(data = data@data, gbm.x = gbm.x, gbm.y = "Occur",
                                 family = "bernoulli", tree.complexity = 3, learning.rate = 0.002,
@@ -51,16 +52,16 @@ for(i in 1:10) {
   print(fullsimp[[i]]$final.drops)
 }
 
-namesimp.full <- fullsimp[[1]]$pred.list$preds.4
+modsimp.preds <- fullsimp[[1]]$pred.list$preds.4
 
-modsimp.full <- fit_gbm(data = datamod, gbm.x = namesimp.full)
-modtemp.full <- fit_gbm(data = datatemp, gbm.x = namesimp.full)
-modspat.full <- fit_gbm(data = dataspat, gbm.x = namesimp.full)
+modsimp <- fit_gbm(data = datamod, gbm.x = modsimp.preds)
+modsimp.temp <- fit_gbm(data = datatemp, gbm.x = modsimp.preds)
+modsimp.spat <- fit_gbm(data = dataspat, gbm.x = modsimp.preds)
 
 save_object(modfull)
-save_object(modsimp.full)
-save_object(modtemp.full)
-save_object(modspat.full)
+save_object(modsimp)
+save_object(modsimp.temp)
+save_object(modsimp.spat)
 
 save_object(fullsimp)
 
@@ -79,7 +80,7 @@ predict_gbm <- function(model, data, iter = 10) {
   mean <- rowMeans(pred) %>% as.vector()
 }
 
-datpred <- mutate(segs, ProbOccur =  predict_gbm(modsimp.full, segs, iter = 1))
+datpred <- mutate(segs, ProbOccur =  predict_gbm(modsimp, segs, iter = 1))
 
 save_data(datpred)
 
