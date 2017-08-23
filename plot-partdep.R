@@ -3,7 +3,7 @@ library(cowplot)
 
 set_sub("models")
 
-mod <- load_object("modsimp.full")
+mod <- load_object("modsimp")
 predictors <- mod[[1]]$gbm.call$predictor.names
 
 set_sub("models")
@@ -85,15 +85,15 @@ islandarea <- plot_cont(pred = "IslandArea", log = T)
 cont <- plot_grid(treedist, islandarea, fetch, seglength, it50, it1000, 
           ncol = 2, align = "v", labels = "AUTO")
 
-save_plot("cont")
+subfoldr::save_plot(plot = cont, x = "continous-partdep")
 
 shoretype <- plot_fact(pred = "ShoreType")
 ratstatus <- plot_fact(pred = "RatStatus")
 
-plot_grid(shoretype, ratstatus, align = "v", 
+fact <- plot_grid(shoretype, ratstatus, align = "v", 
           nrow = 2, rel_heights = c(3/4, 1/4), labels = "AUTO")
 
-save_plot(fact)
+subfoldr::save_plot(plot = fact, x = "factor-partdep")
 
 
 

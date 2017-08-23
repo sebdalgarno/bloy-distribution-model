@@ -11,29 +11,25 @@ hg <- load_data("hgpoly")
 
 set_sub("maps")
 
-# preds2 <- preds
-# preds2 %<>% st_cast("POINT") 
-# preds2 %<>% data.frame(st_coordinates(.))
-
 bboxm <- st_bbox(preds) %>% 
   ldply() %>% 
   pull(V1)
 
-# draw inset bounding boxes
+# draw inset bounding boxes (this is how bboxes were determined,
+# but this cannot be included in reproducible code)
 # edit.bbox1 <- editMap(mapview(preds))
 # bbox1 <- edit.bbox1$finished %>% 
 #   st_transform(crs = 3005) %>% 
 #   st_bbox() 
-bbox1 <- c(623115.7, 854581.1, 625224.0, 856503.9)
-pad <- 100
-bbox15 <- c(623115.7 + pad, 854581.1 + pad,
-            625224.0 - pad, 856503.9 - pad)
+
 # edit.bbox2 <- editMap(mapview(preds))
 # bbox2 <- edit.bbox2$finished %>% 
 #   st_transform(crs = 3005) %>% 
 #   st_bbox() 
+
+# these values resulted from above mapedit process
+bbox1 <- c(623115.7, 854581.1, 625224.0, 856503.9)
 bbox2 <- c(627429.4, 854440.9, 634633.9, 860005.0)
-bbox25 <- c(627429.4 + 500, 854440.9 + 500, 634633.9 - 500, 860005.0 - 500)
 
 save_object(bbox1)
 save_object(bbox2)
