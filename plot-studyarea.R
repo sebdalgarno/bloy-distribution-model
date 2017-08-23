@@ -35,11 +35,13 @@ study <- ggplot(segs) +
   scale_color_manual(values = c("black", "blue", "red"), name = "") + 
   labs(x = "Longitude", y = "Latitude") +
   guides(colour = guide_legend(override.aes = list(size = 1))) +
-  ggsn::scalebar(data = NULL, location = "topright", dist = 10, 
+  ggsn::scalebar(data = NULL, location = "bottomleft", dist = 10, 
                  height = 0.007, st.size = 2.3, st.dist = 0.015,
                  x.min = lims[1], x.max = lims[3], y.min = lims[2], y.max = lims[4]) +
-  ggsn::north(data = NULL, location = "topright", scale = 0.1, symbol = 7,
-                 x.min = lims[1], x.max = lims[3], y.min = lims[2], y.max = lims[4])
+  ggsn::north(data = NULL, location = "bottomleft", scale = 0.1, symbol = 7,
+                 x.min = lims[1], x.max = lims[3], y.min = lims[2], y.max = lims[4]) +
+  theme(axis.title = element_text(face = "bold", size = 10),
+        axis.text = element_text(size = 8))
 
 
 inset <- ggplot(can) +
@@ -52,10 +54,13 @@ inset <- ggplot(can) +
         axis.ticks = element_blank(),
         plot.margin = unit(c(0, 0, 0, 0), "cm"))
 
+subfoldr::save_plot(plot = study, x = "study-area", csv = F, report = F)
+subfoldr::save_plot(plot = inset, x = "inset", csv = F, report = F)
 
-grid.newpage()
-vp_b <- viewport(width = 1, height = 1, x = 0.5, y = 0.5)  # the larger map
-vp_a <- viewport(width = 0.31, height = 0.31, x = 0.719, y = 0.831)  # the inset in upper left
-print(study, vp = vp_b)
-print(inset, vp = vp_a)
+# study
+# grid.newpage()
+# vp_b <- viewport(width = 1, height = 1, x = 0.5, y = 0.5)  # the larger map
+# vp_a <- viewport(width = 0.31, height = 0.31, x = 0.719, y = 0.831)  # the inset in upper left
+# print(study, vp = vp_b)
+# print(inset, vp = vp_a)
 
