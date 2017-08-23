@@ -29,34 +29,29 @@ bboxm <- st_bbox(preds)
 bbox1 <- c(623115.7, 854581.1, 625224.0, 856503.9)
 bbox2 <- c(627429.4, 854440.9, 634633.9, 860005.0)
 
+
+
+
 save_object(bbox1)
 save_object(bbox2)
 
-plot_prediction <- function(data = preds, lwd = 0.2, bbox = bboxm, dist, lwdpred, 
+plot_prediction <- function(data = preds, bbox = bboxm, dist, lwdpred, 
                             padx1 = 0, padx2 = 0, pady1 = 0, pady2 = 0,
                             axes = T, scalesize = 3.5) {
   
-  bbox <- c(bbox[1] + padx1, bbox[2] + pady1,
+  bboxp <- c(bbox[1] + padx1, bbox[2] + pady1,
             bbox[3] - padx2, bbox[4] - pady2)
-  
-  boxp <- st_polygon(list(rbind(c(bbox[1], bbox[2]), c(bbox[1], bbox[4]),
-                             c(bbox[3], bbox[4]), c(bbox[3], bbox[2]),
-                             c(bbox[1], bbox[2]))))
-  
-  boxpsf <- st_sf(geometry = st_sfc(boxp, crs = 3005))
-  suppressWarnings(data %<>% st_intersection(boxpsf))
-  suppressWarnings(hg %<>% st_intersection(boxpsf))
-  
+
   gp <- ggplot(data) + 
     ggplot2::geom_sf(data = hg, fill = "black", color = "black", lwd = 0.01) +
     ggplot2::geom_sf(data = data, aes(color = ProbOccur), lwd = lwdpred) +
-    ggplot2::coord_sf(xlim = c(bbox[[1]], bbox[[3]]), ylim = c(bbox[[2]], bbox[[4]])) +
+    ggplot2::coord_sf(xlim = c(bboxp[1], bboxp[3]), ylim = c(bboxp[2], bboxp[4])) +
     scale_color_gradientn(colours = palette, guide = "colourbar") + 
     ggsn::scalebar(data = NULL, location = "bottomleft", dist = dist, 
                    height = 0.007, st.size = scalesize, st.dist = 0.015,
-                   x.min = bbox[[1]], x.max = bbox[[3]], y.min = bbox[[2]], y.max = bbox[[4]]) +
+                   x.min = bboxp[[1]], x.max = bboxp[[3]], y.min = bboxp[[2]], y.max = bboxp[[4]]) +
     ggsn::north(data = NULL, location = "bottomleft", scale = 0.1, symbol = 7,
-                x.min = bbox[[1]], x.max = bbox[[3]], y.min = bbox[[2]], y.max = bbox[[4]]) + 
+                x.min = bboxp[[1]], x.max = bboxp[[3]], y.min = bboxp[[2]], y.max = bboxp[[4]]) + 
     theme_dark()
   
   if(axes == T) {
@@ -66,25 +61,26 @@ plot_prediction <- function(data = preds, lwd = 0.2, bbox = bboxm, dist, lwdpred
             axis.text = element_text(size = 9))
     gp
   } else {
-    gp <- gp + theme(axis.text = element_blank(),
-               axis.ticks = element_blank(),
+    gp <- gp + theme(axis.ticks = element_blank(),
                legend.position = "none",
                axis.title = element_blank())
     gp
   }
 }
 
-psa <- plot_prediction(bbox = bboxm, dist = 10, lwdpred = 0.2)
+psa <- plot_prediction(bbox = bboxm, dist = 10, lwdpred = 0.4) + 
 
-inset1 <- plot_prediction(bbox = bbox1, dist = 0.25, lwdpred = 1, 
+inset1 <- plot_prediction(bbox = bbox1, dist = 0.25, 
+                          scalesize = 2.5, lwdpred = 0.7, 
                           padx1 = 200, pady2 = 200, 
                           padx2 = 100, pady1 = 100,
-                          axes = T)
+                          axes = F)
 
-inset2 <- plot_prediction(bbox = bbox2, dist = 0.5, lwdpred = 1,
-                          padx1 = 200, pady2 = 200, 
-                          padx2 = 100, pady1 = 100,
-                          axes = T)
+inset2 <- plot_prediction(bbox = bbox2, dist = 0.5, 
+                          scalesize = 2.5, lwdpred = 0.8,
+                          padx1 = 400, pady2 = 500, 
+                          padx2 = 400, pady1 = 200,
+                          axes = F)
 
 subfoldr::save_plot(plot = psa, x = "predict-studyarea", width = 7, height = 8, csv = F, report = F)
 subfoldr::save_plot(plot = inset1, x = "predict-inset1", width = 5, height = 5, csv = F, report = F)

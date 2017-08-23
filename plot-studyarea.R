@@ -49,7 +49,7 @@ inset <- ggplot(can) +
   geom_sf(data = can, lwd = 0.2) + 
   coord_sf(xlim = c(xmin, xmax), ylim = c(ymin, ymax)) +
   geom_rect(xmin = limsalb[[1]], xmax = limsalb[[3]], ymin = limsalb[[2]], ymax = limsalb[[4]], 
-            color = "red", fill = "transparent", lwd = 0.5) +
+            color = "black", fill = "transparent", lwd = 0.6) +
   labs(x = "", y = "") + 
   theme(axis.text = element_blank(),
         axis.ticks = element_blank(),
