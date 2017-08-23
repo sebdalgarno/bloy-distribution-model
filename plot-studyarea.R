@@ -31,7 +31,7 @@ xmin <- -2400000
 study <- ggplot(segs) + 
   ggplot2::geom_sf(data = hg, fill = "grey90", color = "black", lwd = 0.01) +
   ggplot2::coord_sf(xlim = c(lims[1], lims[3]), ylim = c(lims[2], lims[4])) +
-  ggplot2::geom_line(data = segs2, aes(x = X, y = Y, group = LineID, color = SurveyYear), lwd = 0.2) +
+  ggplot2::geom_line(data = segs2, aes(x = X, y = Y, group = LineID, color = SurveyYear), lwd = 0.3) +
   scale_color_manual(values = c("black", "blue", "red"), name = "") + 
   labs(x = "Longitude", y = "Latitude") +
   guides(colour = guide_legend(override.aes = list(size = 1))) +
@@ -54,5 +54,5 @@ inset <- ggplot(can) +
         axis.ticks = element_blank(),
         plot.margin = unit(c(0, 0, 0, 0), "cm"))
 
-subfoldr::save_plot(plot = study, x = "study-area", csv = F, report = F)
-subfoldr::save_plot(plot = inset, x = "inset", csv = F, report = F)
+subfoldr::save_plot(plot = study, x = "study-area", csv = F, report = F, width = 6, height = 8)
+subfoldr::save_plot(plot = inset, x = "inset", csv = F, report = F, width = 6, height = 9)
