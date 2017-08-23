@@ -1,5 +1,4 @@
 source('header.R')
-library(cowplot)
 
 set_sub("models")
 
@@ -27,7 +26,7 @@ get_partdep <- function(model = mod[[1]], pred = predictors) {
 
 partdep <- get_partdep(mod[[1]])
 
-plot_cont <- function(data = partdep, pred = "SegLength", log = F) {
+plot_cont <- function(data = partdep, pred = "SegLength", log = F, lab = F) {
   
   part <- data[[pred]]
   
@@ -48,14 +47,15 @@ plot_cont <- function(data = partdep, pred = "SegLength", log = F) {
     gp + annotation_logticks(sides="b", short = unit(.5, "mm"), mid = unit(1, "mm"), 
                              long = unit(2, "mm")) +
       scale_x_continuous(labels = scales::math_format(10^.x))
-  }
+  } else {}
   
-  else {
-    gp
-  }
+  if(lab == T) {
+    gp <- gp + labs(y = "Predicted\nProbability of Occurrence")
+  } else {}
+  gp
 }
 
-plot_fact <- function(data = partdep, pred = "ShoreType") {
+plot_fact <- function(data = partdep, pred = "ShoreType", lab = F) {
   part <- data[[pred]] %>% select_(pred, "y")
 
   level = arrange(part, y)[1:nrow(part), 1]
@@ -72,27 +72,31 @@ plot_fact <- function(data = partdep, pred = "ShoreType") {
           axis.title.x = element_text(margin = margin(10, 0, 0, 0))) +
     scale_y_continuous(expand = c(0,0), limits = c(0, 0.6)) 
   
+  if(lab == T) {
+    gp <- gp + labs(y = "Predicted\nProbability of Occurrence")
+  } else {}
   gp
 }
 
 seglength <- plot_cont(pred = "SegLength", log = F)
-fetch <- plot_cont(pred = "Fetch",  log = T)
+fetch <- plot_cont(pred = "Fetch",  log = T, lab = T)
 it50 <- plot_cont(pred = "IT50",  log = F)
+it1000 <- plot_cont(pred = "IT1000",  log = F)
 treedist <- plot_cont(pred = "TreeDist", log = T)
 islandarea <- plot_cont(pred = "IslandArea", log = T)
 
-cont <- plot_grid(treedist, islandarea, fetch, seglength, it50, 
+cont <- plot_grid(treedist, islandarea, fetch, seglength, it50, it1000,
           ncol = 2, align = "v", labels = "AUTO")
 
-subfoldr::save_plot(plot = cont, x = "continous-partdep")
+subfoldr::save_plot(plot = cont, x = "continous-partdep", width = 6.2, height = 8, csv = F, report = F)
 
 shoretype <- plot_fact(pred = "ShoreType")
-ratstatus <- plot_fact(pred = "RatStatus")
+ratstatus <- plot_fact(pred = "RatStatus", lab = T)
 
 fact <- plot_grid(shoretype, ratstatus, align = "v", 
           nrow = 2, rel_heights = c(3/4, 1/4), labels = "AUTO")
 
-subfoldr::save_plot(plot = fact, x = "factor-partdep")
+subfoldr::save_plot(plot = fact, x = "factor-partdep", width = 6, height = 8, csv = F, report = F)
 
 
 
