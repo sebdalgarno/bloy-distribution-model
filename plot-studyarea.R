@@ -56,11 +56,3 @@ inset <- ggplot(can) +
 
 subfoldr::save_plot(plot = study, x = "study-area", csv = F, report = F)
 subfoldr::save_plot(plot = inset, x = "inset", csv = F, report = F)
-
-# study
-# grid.newpage()
-# vp_b <- viewport(width = 1, height = 1, x = 0.5, y = 0.5)  # the larger map
-# vp_a <- viewport(width = 0.31, height = 0.31, x = 0.719, y = 0.831)  # the inset in upper left
-# print(study, vp = vp_b)
-# print(inset, vp = vp_a)
-

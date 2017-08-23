@@ -78,11 +78,10 @@ plot_fact <- function(data = partdep, pred = "ShoreType") {
 seglength <- plot_cont(pred = "SegLength", log = F)
 fetch <- plot_cont(pred = "Fetch",  log = T)
 it50 <- plot_cont(pred = "IT50",  log = F)
-it1000 <- plot_cont(pred = "IT1000", log = F)
 treedist <- plot_cont(pred = "TreeDist", log = T)
 islandarea <- plot_cont(pred = "IslandArea", log = T)
 
-cont <- plot_grid(treedist, islandarea, fetch, seglength, it50, it1000, 
+cont <- plot_grid(treedist, islandarea, fetch, seglength, it50, 
           ncol = 2, align = "v", labels = "AUTO")
 
 subfoldr::save_plot(plot = cont, x = "continous-partdep")

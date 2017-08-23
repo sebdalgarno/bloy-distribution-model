@@ -25,7 +25,6 @@ fit_gbm <- function(data, iter = 10, gbm.x = fullpreds) {
   data %<>% as("Spatial")
   mod <- vector("list", iter)
   
-  mod <- lapply()
   for (i in 1:iter) {
     mod[[i]] <- dismo::gbm.step(data = data@data, gbm.x = gbm.x, gbm.y = "Occur",
                                 family = "bernoulli", tree.complexity = 3, learning.rate = 0.002,
