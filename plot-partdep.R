@@ -26,7 +26,7 @@ get_partdep <- function(model = mod[[1]], pred = predictors) {
 
 partdep <- get_partdep(mod[[1]])
 
-plot_cont <- function(data = partdep, pred = "SegLength", log = F, lab = F, title) {
+plot_cont <- function(data = partdep, pred = "SegLength", log = F, title) {
   
   part <- data[[pred]]
   
@@ -69,26 +69,23 @@ plot_fact <- function(data = partdep, pred = "ShoreType", lab = F) {
           axis.title.x = element_text(margin = margin(10, 0, 0, 0))) +
     scale_y_continuous(expand = c(0,0), limits = c(0, 0.6)) 
   
-  if(lab == T) {
-    gp <- gp + labs(y = "Predicted\nProbability of Occurrence")
-  } else {}
   gp
 }
 
 seglength <- plot_cont(pred = "SegLength", log = F, title = "SegLength (m)")
-fetch <- plot_cont(pred = "Fetch",  log = T, lab = T, title = "Fetch (m)")
+fetch <- plot_cont(pred = "Fetch",  log = T, title = "Fetch (m)") + labs(y = "Predicted\nProbability of Occurrence")
 it50 <- plot_cont(pred = "IT50",  log = F, title = expression(paste("IT50 ", "(", 'm'^2, ")"))) 
 it1000 <- plot_cont(pred = "IT1000",  log = F, title = expression(paste("IT1000 ", "(", 'm'^2, ")")))
 treedist <- plot_cont(pred = "TreeDist", log = T, title = "TreeDist (m)")
 islandarea <- plot_cont(pred = "IslandArea", log = T, title = expression(paste("IslandArea ", "(", 'm'^2, ")")))
 
-cont <- plot_grid(treedist, islandarea, fetch, seglength, it50, it1000,
+cont <- plot_grid(treedist, islandarea, fetch, it50, seglength,  it1000,
           ncol = 2, align = "v", labels = "AUTO")
 
 subfoldr::save_plot(plot = cont, x = "continous-partdep", width = 6.2, height = 8, csv = F, report = F)
 
 shoretype <- plot_fact(pred = "ShoreType")
-ratstatus <- plot_fact(pred = "RatStatus", lab = T)
+ratstatus <- plot_fact(pred = "RatStatus") + labs(y = "Predicted\nProbability of Occurrence")
 
 fact <- plot_grid(shoretype, ratstatus, align = "v", 
           nrow = 2, rel_heights = c(3/4, 1/4), labels = "AUTO")
