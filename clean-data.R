@@ -39,7 +39,7 @@ segs %<>% mutate(Fetch = as.numeric(Fetch),
                  IT200 = as.numeric(IT200),
                  IT500 = as.numeric(IT500),
                  IT1000 = as.numeric(IT1000),
-                 HumanDist = as.numeric(IslandArea))
+                 HumanDist = as.numeric(HumanDist))
 
 set_sub("clean")
 
