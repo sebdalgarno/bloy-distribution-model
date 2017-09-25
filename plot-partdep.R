@@ -28,6 +28,15 @@ get_partdep <- function(model = mod[[1]], pred = predictors) {
 }
 
 partdep <- get_partdep(mod[[1]])
+# change rat status factors
+pdrat <- partdep[[6]]
+pdrat %<>% 
+  select(-yc) %>%
+  mutate(RatStatus = case_when(RatStatus == "Present" ~ "Rats Present on Island",
+                                        RatStatus == "Absent" ~ "Rats Absent on Island",
+                                        is.na(RatStatus) ~ NA_character_))
+partdep[[6]] <- pdrat
+
 
 plot_cont <- function(data = partdep, pred = "SegLength", log = F, title) {
   
