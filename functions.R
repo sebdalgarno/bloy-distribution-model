@@ -63,17 +63,25 @@ get_scale <- function(dist = 5, height = 0.008, st.size = 3.5) {
 # get median
 descriptive <- function(df){
   lapply(df, function(x){
-    list(median = median(x, na.rm = T),
-         min = min(x, na.rm = T),
-         max = max(x, na.rm = T))})
+    if(inherits(x, "numeric")){
+      list(median = median(x, na.rm = T),
+           range = range(x, na.rm = T))
+    } else {
+      list()
+    }
+  })
 }
 
 descriptive_log <- function(df){
   lapply(df, function(x){
-    10^x
-    list(median = median(x, na.rm = T),
-         min = min(x, na.rm = T),
-         max = max(x, na.rm = T))})
+    if(inherits(x, "numeric")){
+      10^x
+      list(median = median(x, na.rm = T),
+           range = range(x, na.rm = T))
+    } else {
+      list()
+    }
+    })
 }
 
 

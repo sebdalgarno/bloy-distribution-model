@@ -44,7 +44,6 @@ study <- ggplot(segs) +
         legend.text = element_text(size = 11),
         axis.text = element_text(size = 9))
 
-
 inset <- ggplot(can) +
   geom_sf(data = can, lwd = 0.2) + 
   coord_sf(xlim = c(xmin, xmax), ylim = c(ymin, ymax)) +

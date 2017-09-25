@@ -80,6 +80,7 @@ segs %<>% select(-Survey2010, - Survey2005, -Occur2010,
 
 segs %<>% select(LineID:RatStatus, SegLength:Slope, Zone, SurveyYear:geometry)
 
+
 set_sub("tidy")
 
 save_datas()
