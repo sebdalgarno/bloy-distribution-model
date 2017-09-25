@@ -8,7 +8,10 @@ predictors <- mod[[1]]$gbm.call$predictor.names
 set_sub("models")
 
 datamod <- load_data("datamod") %>%
-  mutate(SegLength = as.numeric(SegLength))
+  mutate(SegLength = as.numeric(SegLength),
+         RatStatus = case_when(RatStatus == "Present" ~ "Rats Present on Island",
+                               RatStatus == "Absent" ~ "Rats Absent on Island",
+                               is.na(RatStatus) ~ NA_character_))
 
 set_sub("partdep")
 
