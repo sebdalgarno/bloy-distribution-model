@@ -9,8 +9,9 @@ set_sub("input")
 hg <- load_data("hgpoly")
 
 set_sub("tidy")
-occ <- load_data("occ")
-occ %<>% data.frame(st_coordinates(.))
+occ <- load_data("occ") %>%
+  slice(-68)
+occ %<>% cbind(st_coordinates(.))
 
 set_sub("maps")
 
@@ -28,12 +29,20 @@ bboxm <- st_bbox(preds)
 #   st_transform(crs = 3005) %>% 
 #   st_bbox() 
 
+# edit.bbox3 <- editMap(mapview(preds))
+# bbox3 <- edit.bbox3$finished %>%
+#   st_transform(crs = 3005) %>%
+#   st_bbox() %>%
+#   as.vector()
+
 # these values resulted from above mapedit process
 bbox1 <- c(623115.7, 854581.1, 625224.0, 856503.9)
 bbox2 <- c(627429.4, 854440.9, 634633.9, 860005.0)
+bbox3 <- c(637914.8, 825328.3, 642987.3, 829202.2)
 
 save_object(bbox1)
 save_object(bbox2)
+save_object(bbox3)
 
 plot_prediction <- function(data = preds, bbox, dist, lwdpred, 
                             padx1 = 0, padx2 = 0, pady1 = 0, pady2 = 0,
@@ -84,9 +93,16 @@ inset2 <- plot_prediction(bbox = bbox2, dist = 0.5,
                           padx2 = 400, pady1 = 200,
                           axes = F, ptsize = 2) 
 
+inset3 <- plot_prediction(bbox = bbox3, dist = 0.5, 
+                          scalesize = 2.5, lwdpred = 0.8,
+                          padx1 = 400, pady2 = 500, 
+                          padx2 = 400, pady1 = 200,
+                          axes = F, ptsize = 2) 
+
 subfoldr::save_plot(plot = psa, x = "predict-studyarea", width = 7, height = 8, csv = F, report = F)
 subfoldr::save_plot(plot = inset1, x = "predict-inset1", width = 5, height = 5, csv = F, report = F)
 subfoldr::save_plot(plot = inset2, x = "predict-inset2", width = 6, height = 5, csv = F, report = F)
+subfoldr::save_plot(plot = inset3, x = "predict-inset3", width = 6, height = 5, csv = F, report = F)
 
 
 
