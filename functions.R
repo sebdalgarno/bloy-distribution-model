@@ -75,7 +75,7 @@ descriptive <- function(df){
 descriptive_log <- function(df){
   lapply(df, function(x){
     if(inherits(x, "numeric")){
-      10^x
+      x <- 10^x
       list(median = median(x, na.rm = T),
            range = range(x, na.rm = T))
     } else {
